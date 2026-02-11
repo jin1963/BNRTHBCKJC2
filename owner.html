@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Owner Panel - CoreV4 / Earnings / Vault / Stake365</title>
+  <link rel="stylesheet" href="../style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+  <script src="owner_config.js"></script>
+  <script defer src="owner.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>Owner Panel (CoreV4 / Earnings / Vault / Stake365)</h1>
+
+  <div class="topbar">
+    <div class="row">
+      <button class="btn" id="btnConnect">Connect</button>
+      <span class="pill mono" id="wallet">-</span>
+      <span class="pill">chainId: <span id="chain">-</span></span>
+      <button class="btn gray" id="btnRefresh">Refresh</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="grid two">
+      <div>
+        <div class="muted">CORE owner</div><div class="pill mono" id="coreOwner">-</div>
+        <div class="muted">CORE treasury</div><div class="pill mono" id="coreTreasury">-</div>
+        <div class="muted">CORE defaultSponsor</div><div class="pill mono" id="coreDefaultSponsor">-</div>
+      </div>
+      <div>
+        <div class="muted">EARN owner</div><div class="pill mono" id="earnOwner">-</div>
+        <div class="muted">EARN core()</div><div class="pill mono" id="earnCore">-</div>
+        <div class="muted">EARN reserve()</div><div class="pill mono" id="earnReserve">-</div>
+        <div class="muted">EARN bufferBP()</div><div class="pill mono" id="earnBuffer">-</div>
+        <div class="muted">EARN withdrawableExcess()</div><div class="pill mono" id="earnExcess">-</div>
+      </div>
+    </div>
+
+    <hr/>
+
+    <div class="grid two">
+      <div>
+        <div class="muted">VAULT owner</div><div class="pill mono" id="vaultOwner">-</div>
+        <div class="muted">VAULT core()</div><div class="pill mono" id="vaultCore">-</div>
+        <div class="muted">VAULT rate</div><div class="pill mono" id="vaultRate">-</div>
+        <div class="muted">VAULT rateLocked</div><div class="pill mono" id="vaultLocked">-</div>
+      </div>
+      <div>
+        <div class="muted">STAKE owner</div><div class="pill mono" id="stakeOwner">-</div>
+        <div class="muted">STAKE core()</div><div class="pill mono" id="stakeCore">-</div>
+        <div class="muted">STAKE reservedTotal</div><div class="pill mono" id="stakeReserved">-</div>
+      </div>
+    </div>
+
+    <div class="status muted" id="status" style="margin-top:10px">-</div>
+  </div>
+
+  <div class="grid two">
+    <div class="card">
+      <h3 style="margin:0 0 8px">Offer / Set User (Earnings ownerGrantRank)</h3>
+      <label>Target User</label>
+      <input id="targetUser" placeholder="0x..." />
+      <div class="grid two">
+        <div>
+          <label>Offer Rank (0/1/2/3)</label>
+          <select id="offerRank">
+            <option value="0">0 = None</option>
+            <option value="1">1 = Bronze</option>
+            <option value="2">2 = Silver</option>
+            <option value="3">3 = Gold</option>
+          </select>
+        </div>
+        <div>
+          <label>Active</label>
+          <select id="offerActive">
+            <option value="true">true</option>
+            <option value="false">false</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn gray" id="btnPreview">Preview users(u)</button>
+        <button class="btn" id="btnOffer">Offer / Set User</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px">CoreV4 Admin</h3>
+
+      <label>setTreasury(address)</label>
+      <input id="newTreasury" placeholder="0x..." />
+      <button class="btn gray" style="margin-top:8px;width:100%" id="btnSetTreasury">setTreasury</button>
+
+      <label style="margin-top:10px">setDefaultSponsor(address)</label>
+      <input id="newDefaultSponsor" placeholder="0x..." />
+      <button class="btn gray" style="margin-top:8px;width:100%" id="btnSetDefaultSponsor">setDefaultSponsor</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 8px">setPackage (CoreV4)</h3>
+    <div class="grid two">
+      <div>
+        <label>id</label><input id="pkgId" placeholder="0" />
+      </div>
+      <div>
+        <label>active</label>
+        <select id="pkgActive"><option value="true">true</option><option value="false">false</option></select>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div>
+        <label>usdtPrice (USDT)</label><input id="pkgUsdt" placeholder="100" />
+      </div>
+      <div>
+        <label>thbcAmount (THBC)</label><input id="pkgThbc" placeholder="3500" />
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div>
+        <label>apyBP (เช่น 50 = 0.5%, 150 = 1.5%)</label><input id="pkgApy" placeholder="50" />
+      </div>
+      <div>
+        <label>lockSeconds (365 วัน = 31536000)</label><input id="pkgLock" placeholder="31536000" />
+      </div>
+    </div>
+
+    <label>rank (uint8)</label>
+    <select id="pkgRank">
+      <option value="0">0 = None</option>
+      <option value="1">1 = Bronze</option>
+      <option value="2">2 = Silver</option>
+      <option value="3">3 = Gold</option>
+    </select>
+
+    <button class="btn" style="margin-top:10px;width:100%" id="btnSetPackage">setPackage</button>
+  </div>
+
+  <div class="grid two">
+    <div class="card">
+      <h3 style="margin:0 0 8px">Vault Admin (KJC)</h3>
+      <label>Amount (KJC)</label>
+      <input id="vaultAmt" placeholder="1000" />
+      <div class="row" style="margin-top:10px">
+        <button class="btn gray" id="btnVaultDep">ownerDepositKJC</button>
+        <button class="btn gray" id="btnVaultWit">ownerWithdrawKJC</button>
+      </div>
+
+      <hr/>
+
+      <label>setRate(newRate) (เลขดิบของ rate ในสัญญา)</label>
+      <input id="vaultRateIn" placeholder="เช่น 1000000000000000000" />
+      <div class="row" style="margin-top:10px">
+        <button class="btn gray" id="btnVaultRate">setRate</button>
+        <button class="btn gray" id="btnVaultLock">lockRate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px">Stake365 Admin (KJC)</h3>
+      <label>Amount (KJC)</label>
+      <input id="stakeAmt" placeholder="1000" />
+      <button class="btn gray" style="margin-top:10px;width:100%" id="btnStakeDep">ownerDepositKJC</button>
+
+      <hr/>
+
+      <h3 style="margin:0 0 8px">Earnings Sweep Excess</h3>
+      <label>Amount (USDT)</label>
+      <input id="sweepAmt" placeholder="10" />
+      <button class="btn gray" style="margin-top:10px;width:100%" id="btnSweep">sweepExcessToReserve</button>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
